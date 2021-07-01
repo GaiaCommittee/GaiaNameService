@@ -5,12 +5,12 @@
         <RootNamespace>Gaia.NameService</RootNamespace>
         <Nullable>disable</Nullable>
         <Company>Gaia</Company>
-        <AssemblyVersion>1.0</AssemblyVersion>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
         <Title>Gaia Name Client.</Title>
         <Authors>Gaia</Authors>
         <Description>The client for Gaia Name Service.</Description>
         <Copyright>All rights reserved.</Copyright>
-        <FileVersion>1.0</FileVersion>
+        <FileVersion>1.0.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
