@@ -71,7 +71,7 @@ namespace Gaia.NameService
         /// <returns>Corresponding name token.</returns>
         public NameToken HoldName(string name, string address = "")
         {
-            return new NameToken(Server, Database, name, address);
+            return new(Server, Database, name, address);
         }
     }
 }
