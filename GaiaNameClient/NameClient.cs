@@ -37,10 +37,10 @@ namespace Gaia.NameService
         /// Query all registered name.
         /// </summary>
         /// <remarks>It is a time consuming function.</remarks>
-        /// <returns>All valid registered names with out prefix "gaia.names/".</returns>
+        /// <returns>All valid registered names with out prefix "names/".</returns>
         public IEnumerable<string> GetNames()
         {
-            return Server.Keys(pattern: "gaia.names/*").Select(name => ((string) name).Substring(11));
+            return Server.Keys(pattern: "names/*").Select(name => ((string) name).Split("/")[^1]);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Gaia.NameService
         /// <returns>Whether this name exists or not.</returns>
         public bool HasName(string name)
         {
-            return Database.KeyExists($"gaia.names/{name}");
+            return Database.KeyExists($"names/{name}");
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Gaia.NameService
         /// <returns>Address text of the given name, or empty if it does not exist.</returns>
         public string GetAddress(string name)
         {
-            return Database.StringGet($"gaia.names/{name}");
+            return Database.StringGet($"names/{name}");
         }
 
         /// <summary>

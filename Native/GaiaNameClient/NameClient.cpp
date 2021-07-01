@@ -25,15 +25,15 @@ namespace Gaia::NameService
         std::list<std::string> results;
         do
         {
-            cursor = Connection->scan(0, "gaia.names/*", results.end());
+            cursor = Connection->scan(0, "names/*", results.end());
         }while (cursor != 0);
 
         std::unordered_set<std::string> names;
 
-        // Remove prefix "gaia.names/"
+        // Remove prefix "names/"
         for (const auto& result : results)
         {
-            names.insert(result.substr(11));
+            names.insert(result.substr(6));
         }
 
         return names;
@@ -48,13 +48,13 @@ namespace Gaia::NameService
     /// Activate a name.
     void NameClient::RegisterName(const std::string &name, const std::string& address)
     {
-        Connection->set("gaia.names/" + name, address, std::chrono::seconds(3));
+        Connection->set("names/" + name, address, std::chrono::seconds(3));
     }
 
     /// Deactivate a name.
     void NameClient::UnregisterName(const std::string &name)
     {
-        Connection->del("gaia.names/" + name);
+        Connection->del("names/" + name);
     }
 
     /// Query whether a name is valid or not.
@@ -66,7 +66,7 @@ namespace Gaia::NameService
     /// Update the timestamp of a name to keep it valid.
     void NameClient::UpdateName(const std::string &name)
     {
-        Connection->expire("gaia.names/" + name, std::chrono::seconds(3));
+        Connection->expire("names/" + name, std::chrono::seconds(3));
     }
 
     /// Get the address text of the given name.

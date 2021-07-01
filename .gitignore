@@ -33,6 +33,7 @@
 
 # Misc
 /.idea
-/Native/.idea
 /*/bin
 /*/obj
+/Native/.idea
+/Native/cmake-*

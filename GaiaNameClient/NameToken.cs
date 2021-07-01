@@ -45,8 +45,8 @@ namespace Gaia.NameService
             Server = server;
             Database = database;
 
-            Database?.StringSet($"gaia.names/{Name}", address);
-            Database?.KeyExpire($"gaia.names/{Name}", TimeSpan.FromSeconds(3));
+            Database?.StringSet($"names/{Name}", address);
+            Database?.KeyExpire($"names/{Name}", TimeSpan.FromSeconds(3));
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Gaia.NameService
         public void Dispose()
         {
             StopBackgroundUpdater();
-            Database?.KeyDelete($"gaia.names/{Name}");
+            Database?.KeyDelete($"names/{Name}");
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Gaia.NameService
         /// </summary>
         public void Update()
         {
-            Database?.KeyExpire($"gaia.names/{Name}", TimeSpan.FromSeconds(3));
+            Database?.KeyExpire($"names/{Name}", TimeSpan.FromSeconds(3));
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Gaia.NameService
         /// <returns>Address text of the corresponding name.</returns>
         private string GetAddress()
         {
-            var result = Database?.StringGet($"gaia.names/{Name}");
+            var result = Database?.StringGet($"names/{Name}");
             if (result != null)
             {
                 return result;
@@ -86,7 +86,7 @@ namespace Gaia.NameService
         /// </summary>
         private void SetAddress(string address)
         {
-            Database?.StringSet($"gaia.names/{Name}", address);
+            Database?.StringSet($"names/{Name}", address);
         }
 
         /// <summary>
