@@ -26,23 +26,6 @@ namespace Gaia::NameService
         options.socket_timeout = std::chrono::milliseconds(100);
 
         Connection = std::make_unique<sw::redis::Redis>(options);
-
-        // Start the background updater thread.
-        UpdaterFlag = true;
-        UpdaterToken = std::async(std::launch::async, [this](){
-           while (this->UpdaterFlag)
-           {
-               // Update the timestamp of names.
-               std::shared_lock lock(this->NamesMutex);
-               for (const auto& name : this->Names)
-               {
-                    this->Connection->zadd("gaia/names", name, static_cast<double>(GetTimestamp()));
-               }
-               lock.unlock();
-               // Update interval time is 1.5s.
-               std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-           }
-        });
     }
 
     /// Get all registered names.
@@ -57,38 +40,19 @@ namespace Gaia::NameService
     /// Register a name and get the corresponding token.
     std::unique_ptr<Token> Client::HoldName(const std::string &name)
     {
-        RegisterName(name);
-        return std::make_unique<Token>(this, name);
+        return std::unique_ptr<Token>(new Token(this, name));
     }
 
     /// Activate a name.
     void Client::RegisterName(const std::string &name)
     {
-        std::unique_lock lock(NamesMutex);
-        Names.insert(name);
         Connection->zadd("gaia/names", name, static_cast<double>(GetTimestamp()));
     }
 
     /// Deactivate a name.
     void Client::UnregisterName(const std::string &name)
     {
-        std::unique_lock lock(NamesMutex);
-        Names.erase(name);
         Connection->zrem("gaia/names", name);
-    }
-
-    /// Stop the background updater thread.
-    Client::~Client()
-    {
-        // Stop the background updater thread.
-        if (UpdaterFlag)
-        {
-            UpdaterFlag = false;
-            if (UpdaterToken.valid())
-            {
-                UpdaterToken.get();
-            }
-        }
     }
 
     /// Query whether a name is valid or not.
@@ -97,5 +61,11 @@ namespace Gaia::NameService
         auto names = GetNames();
         auto finder = names.find(name);
         return finder != names.end();
+    }
+
+    /// Update the timestamp of a name to keep it valid.
+    void Client::UpdateName(const std::string &name)
+    {
+        this->Connection->zadd("gaia/names", name, static_cast<double>(GetTimestamp()));
     }
 }

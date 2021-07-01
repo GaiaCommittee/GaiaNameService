@@ -24,13 +24,28 @@ namespace Gaia::NameService
     protected:
         /// Pointer to the host name service client.
         Client* Host;
+        /// Token for the background updater thread.
+        std::future<void> UpdaterToken {};
+        /// Life flag for the background updater thread.
+        std::atomic<bool> UpdaterFlag {false};
+
+        /// Construct and bind the name.
+        Token(Client* host, std::string name) noexcept;
 
     public:
-        /// Construct and bind the name.
-        explicit Token(Client* host, std::string  name);
         /// Destruct and notify the host client to unregister the bound name.
         ~Token();
         /// Corresponding name.
         const std::string Name;
+
+        /// Update the timestamp of this name to keep it valid.
+        void Update();
+
+        /// Start the background updater thread.
+        void StartBackgroundUpdater();
+        /// Stop the background updater thread.
+        void StopBackgroundUpdater();
+        /// Check whether the background updater is running or not.
+        bool IsBackgroundUpdaterRunning();
     };
 }

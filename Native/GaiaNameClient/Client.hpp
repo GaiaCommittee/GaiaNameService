@@ -34,20 +34,12 @@ namespace Gaia::NameService
         std::unique_ptr<sw::redis::Redis> Connection;
 
     private:
-        /// Token for the background updater thread.
-        std::future<void> UpdaterToken {};
-        /// Life flag for the background updater thread.
-        std::atomic<bool> UpdaterFlag {false};
-
-        /// Mutex for names set.
-        std::shared_mutex NamesMutex;
-        /// Valid names.
-        std::unordered_set<std::string> Names;
-
         /// Activate a name.
         void RegisterName(const std::string& name);
         /// Deactivate a name.
         void UnregisterName(const std::string& name);
+        /// Update the timestamp of a name to keep it valid.
+        void UpdateName(const std::string& name);
 
     public:
         /**
@@ -56,8 +48,6 @@ namespace Gaia::NameService
          * @param ip The ip of the redis server.
          */
         explicit Client(unsigned int port = 6379, const std::string& ip = "127.0.0.1");
-        /// Stop the background updater thread.
-        virtual ~Client();
 
         /**
          * @brief Query all registered names.
