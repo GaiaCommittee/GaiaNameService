@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>Gaia.NameService</RootNamespace>
+        <Nullable>disable</Nullable>
+        <Company>Gaia</Company>
+        <AssemblyVersion>1.0</AssemblyVersion>
+        <Title>Gaia Name Client.</Title>
+        <Authors>Gaia</Authors>
+        <Description>The client for Gaia Name Service.</Description>
+        <Copyright>All rights reserved.</Copyright>
+        <FileVersion>1.0</FileVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="StackExchange.Redis" Version="2.2.50" />
+    </ItemGroup>
+
+</Project>
