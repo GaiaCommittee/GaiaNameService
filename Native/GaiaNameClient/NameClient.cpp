@@ -20,8 +20,13 @@ namespace Gaia::NameService
     /// Get all registered names.
     std::unordered_set<std::string> NameClient::GetNames()
     {
+        unsigned long long cursor = 0;
+
         std::list<std::string> results;
-        Connection->keys("gaia.names/*", results);
+        do
+        {
+            cursor = Connection->scan(0, "gaia.names/*", results.end());
+        }while (cursor != 0);
 
         std::unordered_set<std::string> names;
 
