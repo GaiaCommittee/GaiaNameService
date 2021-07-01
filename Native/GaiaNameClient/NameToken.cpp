@@ -6,12 +6,12 @@
 namespace Gaia::NameService
 {
     /// Construct and bind the name.
-    NameToken::NameToken(NameClient* host, std::string name) noexcept:
+    NameToken::NameToken(NameClient* host, std::string name, const std::string& address) noexcept:
         Host(host), Name(std::move(name))
     {
         if (Host)
         {
-            Host->RegisterName(Name);
+            Host->RegisterName(Name, address);
         }
     }
 
@@ -23,6 +23,12 @@ namespace Gaia::NameService
         {
             Host->UnregisterName(Name);
         }
+    }
+
+    /// Set the address text of this name.
+    void NameToken::SetAddress(const std::string &address)
+    {
+        Host->SetAddress(Name, address);
     }
 
     /// Update the timestamp of this name to keep it valid.

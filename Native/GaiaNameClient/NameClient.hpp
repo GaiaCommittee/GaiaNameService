@@ -23,19 +23,13 @@ namespace Gaia::NameService
     private:
         friend class NameToken;
 
-        /// The starting time point of the timestamp.
-        std::chrono::system_clock::time_point TimestampEpoch;
-
-        /// Get current timestamp, in the format of the count of seconds since the epoch.
-        long GetTimestamp();
-
     protected:
         /// Connection to Redis server, default address is '127.0.0.1:6379'
         std::unique_ptr<sw::redis::Redis> Connection;
 
     private:
         /// Activate a name.
-        void RegisterName(const std::string& name);
+        void RegisterName(const std::string& name, const std::string& address = "");
         /// Deactivate a name.
         void UnregisterName(const std::string& name);
         /// Update the timestamp of a name to keep it valid.
@@ -70,5 +64,20 @@ namespace Gaia::NameService
          * @return The corresponding token to the given name.
          */
         std::unique_ptr<NameToken> HoldName(const std::string& name);
+
+        /**
+         * @brief Get the address text of the given name.
+         * @param name The name to query.
+         * @return The address text of given name, maybe empty.
+         */
+        std::string GetAddress(const std::string& name);
+
+        /**
+         * @brief Set the address text of the given name.
+         * @param name The name to set.
+         * @details This function will not update the timestamp of the given name,
+         *          nor create this name if it does not exist.
+         */
+        void SetAddress(const std::string& name, const std::string& address);
     };
 }

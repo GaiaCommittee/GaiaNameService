@@ -4,6 +4,4 @@
 #include "NameToken.hpp"
 
 namespace Gaia::NameService
-{
-
-}
+{}

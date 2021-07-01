@@ -30,7 +30,7 @@ namespace Gaia::NameService
         std::atomic<bool> UpdaterFlag {false};
 
         /// Construct and bind the name.
-        NameToken(NameClient* host, std::string name) noexcept;
+        NameToken(NameClient* host, std::string name, const std::string& address = "") noexcept;
 
     public:
         /// Destruct and notify the host client to unregister the bound name.
@@ -40,6 +40,9 @@ namespace Gaia::NameService
 
         /// Update the timestamp of this name to keep it valid.
         void Update();
+
+        /// Set the address text of this name.
+        void SetAddress(const std::string& address);
 
         /// Start the background updater thread.
         void StartBackgroundUpdater();
