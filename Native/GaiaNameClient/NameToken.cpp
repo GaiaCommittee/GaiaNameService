@@ -1,12 +1,12 @@
-#include "Token.hpp"
+#include "NameToken.hpp"
 
 #include <utility>
-#include "Client.hpp"
+#include "NameClient.hpp"
 
 namespace Gaia::NameService
 {
     /// Construct and bind the name.
-    Token::Token(Client* host, std::string name) noexcept:
+    NameToken::NameToken(NameClient* host, std::string name) noexcept:
         Host(host), Name(std::move(name))
     {
         if (Host)
@@ -16,7 +16,7 @@ namespace Gaia::NameService
     }
 
     /// Destruct and notify the host client to unregister the bound name.
-    Token::~Token()
+    NameToken::~NameToken()
     {
         StopBackgroundUpdater();
         if (Host)
@@ -26,7 +26,7 @@ namespace Gaia::NameService
     }
 
     /// Update the timestamp of this name to keep it valid.
-    void Token::Update()
+    void NameToken::Update()
     {
         if (Host)
         {
@@ -35,7 +35,7 @@ namespace Gaia::NameService
     }
 
     /// Start the background updater thread.
-    void Token::StartBackgroundUpdater()
+    void NameToken::StartBackgroundUpdater()
     {
         if (UpdaterFlag) return;
         // Start the background updater thread.
@@ -52,7 +52,7 @@ namespace Gaia::NameService
     }
 
     /// Stop the background updater thread.
-    void Token::StopBackgroundUpdater()
+    void NameToken::StopBackgroundUpdater()
     {
         // Stop the background updater thread.
         if (UpdaterFlag)
@@ -66,7 +66,7 @@ namespace Gaia::NameService
     }
 
     /// Check whether the background updater is running or not.
-    bool Token::IsBackgroundUpdaterRunning()
+    bool NameToken::IsBackgroundUpdaterRunning()
     {
         return UpdaterFlag;
     }

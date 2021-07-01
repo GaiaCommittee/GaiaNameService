@@ -1,4 +1,4 @@
-#include "Client.hpp"
+#include "NameClient.hpp"
 
 #include <thread>
 #include <chrono>
@@ -6,7 +6,7 @@
 namespace Gaia::NameService
 {
     /// Get current timestamp, in the format of the count of seconds since the epoch.
-    long Client::GetTimestamp()
+    long NameClient::GetTimestamp()
     {
         return static_cast<long>(
                 std::chrono::duration_cast<std::chrono::seconds>(
@@ -14,7 +14,7 @@ namespace Gaia::NameService
     }
 
     /// Construct and connect to the Redis server on the given address.
-    Client::Client(unsigned int port, const std::string &ip)
+    NameClient::NameClient(unsigned int port, const std::string &ip)
     {
         auto new_epoch_time = std::tm{.tm_year=2018};
         TimestampEpoch = std::chrono::system_clock::from_time_t(std::mktime(&new_epoch_time));
@@ -29,7 +29,7 @@ namespace Gaia::NameService
     }
 
     /// Get all registered names.
-    std::unordered_set<std::string> Client::GetNames()
+    std::unordered_set<std::string> NameClient::GetNames()
     {
         std::unordered_set<std::string> names;
         Connection->zrange("gaia/names", GetTimestamp() - 3, GetTimestamp() + 1,
@@ -38,25 +38,25 @@ namespace Gaia::NameService
     }
 
     /// Register a name and get the corresponding token.
-    std::unique_ptr<Token> Client::HoldName(const std::string &name)
+    std::unique_ptr<NameToken> NameClient::HoldName(const std::string &name)
     {
-        return std::unique_ptr<Token>(new Token(this, name));
+        return std::unique_ptr<NameToken>(new NameToken(this, name));
     }
 
     /// Activate a name.
-    void Client::RegisterName(const std::string &name)
+    void NameClient::RegisterName(const std::string &name)
     {
         Connection->zadd("gaia/names", name, static_cast<double>(GetTimestamp()));
     }
 
     /// Deactivate a name.
-    void Client::UnregisterName(const std::string &name)
+    void NameClient::UnregisterName(const std::string &name)
     {
         Connection->zrem("gaia/names", name);
     }
 
     /// Query whether a name is valid or not.
-    bool Client::HasName(const std::string &name)
+    bool NameClient::HasName(const std::string &name)
     {
         auto names = GetNames();
         auto finder = names.find(name);
@@ -64,7 +64,7 @@ namespace Gaia::NameService
     }
 
     /// Update the timestamp of a name to keep it valid.
-    void Client::UpdateName(const std::string &name)
+    void NameClient::UpdateName(const std::string &name)
     {
         this->Connection->zadd("gaia/names", name, static_cast<double>(GetTimestamp()));
     }

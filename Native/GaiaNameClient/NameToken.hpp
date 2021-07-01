@@ -7,34 +7,34 @@
 
 namespace Gaia::NameService
 {
-    class Client;
+    class NameClient;
 
     /**
-     * @brief Token for a registered name.
+     * @brief NameToken for a registered name.
      * @details
      *  A token represents a registered name, and also will automatically notify the client to
      *  remove the name when be destructed.
      *  A token should only be gotten from the name service client,
      *  for there are many background jobs to do in order to register a name.
      */
-    class Token
+    class NameToken
     {
-        friend class Client;
+        friend class NameClient;
 
     protected:
         /// Pointer to the host name service client.
-        Client* Host;
-        /// Token for the background updater thread.
+        NameClient* Host;
+        /// NameToken for the background updater thread.
         std::future<void> UpdaterToken {};
         /// Life flag for the background updater thread.
         std::atomic<bool> UpdaterFlag {false};
 
         /// Construct and bind the name.
-        Token(Client* host, std::string name) noexcept;
+        NameToken(NameClient* host, std::string name) noexcept;
 
     public:
         /// Destruct and notify the host client to unregister the bound name.
-        ~Token();
+        ~NameToken();
         /// Corresponding name.
         const std::string Name;
 

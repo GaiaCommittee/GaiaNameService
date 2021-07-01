@@ -9,19 +9,19 @@
 #include <chrono>
 #include <sw/redis++/redis++.h>
 
-#include "Token.hpp"
+#include "NameToken.hpp"
 
 namespace Gaia::NameService
 {
     /**
-     * @brief Client for name resolving service.
+     * @brief NameClient for name resolving service.
      * @details
      *  This client instance represents a connection to a Redis server.-
      */
-    class Client
+    class NameClient
     {
     private:
-        friend class Token;
+        friend class NameToken;
 
         /// The starting time point of the timestamp.
         std::chrono::system_clock::time_point TimestampEpoch;
@@ -47,7 +47,7 @@ namespace Gaia::NameService
          * @param port The port of the redis server.
          * @param ip The ip of the redis server.
          */
-        explicit Client(unsigned int port = 6379, const std::string& ip = "127.0.0.1");
+        explicit NameClient(unsigned int port = 6379, const std::string& ip = "127.0.0.1");
 
         /**
          * @brief Query all registered names.
@@ -69,6 +69,6 @@ namespace Gaia::NameService
          * @param name The name to take up.
          * @return The corresponding token to the given name.
          */
-        std::unique_ptr<Token> HoldName(const std::string& name);
+        std::unique_ptr<NameToken> HoldName(const std::string& name);
     };
 }
