@@ -24,11 +24,16 @@ namespace Gaia.NameService
         /// </summary>
         /// <param name="port">Port of the Redis server.</param>
         /// <param name="ip">IP address of the Redis server.</param>
-        public NameClient(uint port = 6379, string ip = "127.0.0.1")
+        public NameClient(uint port = 6379, string ip = "127.0.0.1") :
+            this(ConnectionMultiplexer.Connect($"{ip}:{port.ToString()}"))
+        {}
+
+        /// <summary>
+        /// Reuse the connection to a Redis server.
+        /// </summary>
+        /// <param name="connection"></param>
+        public NameClient(IConnectionMultiplexer connection)
         {
-            var connection = ConnectionMultiplexer.Connect($"{ip}:{port.ToString()}");
-            if (!connection.IsConnected) return;
-            
             Server = connection.GetServer(connection.GetEndPoints()[0]);
             Database = connection.GetDatabase();
         }
