@@ -2,20 +2,18 @@
 
 #include <thread>
 #include <chrono>
+#include <utility>
 
 namespace Gaia::NameService
 {
     /// Construct and connect to the Redis server on the given address.
-    NameClient::NameClient(unsigned int port, const std::string &ip)
-    {
-        // Configure the connection and connect to the Redis server.
-        sw::redis::ConnectionOptions options;
-        options.port = static_cast<int>(port);
-        options.host = ip;
-        options.socket_timeout = std::chrono::milliseconds(100);
+    NameClient::NameClient(unsigned int port, const std::string &ip) :
+        NameClient(std::make_shared<sw::redis::Redis>("tcp://" + ip + ":" + std::to_string(port)))
+    {}
 
-        Connection = std::make_unique<sw::redis::Redis>(options);
-    }
+    /// Reuse the connection to a Redis server.
+    NameClient::NameClient(std::shared_ptr<sw::redis::Redis> connection) : Connection(std::move(connection))
+    {}
 
     /// Get all registered names.
     std::unordered_set<std::string> NameClient::GetNames()
