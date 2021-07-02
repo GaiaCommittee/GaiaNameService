@@ -25,7 +25,7 @@ namespace Gaia::NameService
 
     protected:
         /// Connection to Redis server, default address is '127.0.0.1:6379'
-        std::unique_ptr<sw::redis::Redis> Connection;
+        std::shared_ptr<sw::redis::Redis> Connection;
 
     private:
         /// Activate a name.
@@ -42,6 +42,8 @@ namespace Gaia::NameService
          * @param ip The ip of the redis server.
          */
         explicit NameClient(unsigned int port = 6379, const std::string& ip = "127.0.0.1");
+        /// Reuse the connection to a Redis server.
+        explicit NameClient(std::shared_ptr<sw::redis::Redis> connection);
 
         /**
          * @brief Query all registered names.
