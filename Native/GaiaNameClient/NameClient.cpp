@@ -41,12 +41,16 @@ namespace Gaia::NameService
     void NameClient::RegisterName(const std::string &name, const std::string& address)
     {
         Connection->set("names/" + name, address, std::chrono::seconds(3));
+        std::unique_lock lock(NamesMutex);
+        Names.erase(name);
     }
 
     /// Deactivate a name.
     void NameClient::UnregisterName(const std::string &name)
     {
         Connection->del("names/" + name);
+        std::unique_lock lock(NamesMutex);
+        Names.erase(name);
     }
 
     /// Query whether a name is valid or not.
