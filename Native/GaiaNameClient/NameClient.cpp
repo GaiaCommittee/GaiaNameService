@@ -37,12 +37,6 @@ namespace Gaia::NameService
         return names;
     }
 
-    /// Register a name and get the corresponding token.
-    NameToken NameClient::HoldName(const std::string &name)
-    {
-        return NameToken(this, name);
-    }
-
     /// Activate a name.
     void NameClient::RegisterName(const std::string &name, const std::string& address)
     {
@@ -79,6 +73,16 @@ namespace Gaia::NameService
         if (Connection->exists(name))
         {
             Connection->set(name, address);
+        }
+    }
+
+    /// Update names in the update list.
+    void NameClient::Update()
+    {
+        std::shared_lock lock(NamesMutex);
+        for (const auto& name : Names)
+        {
+            UpdateName(name);
         }
     }
 }

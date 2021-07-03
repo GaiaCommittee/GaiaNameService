@@ -9,8 +9,6 @@
 #include <chrono>
 #include <sw/redis++/redis++.h>
 
-#include "NameToken.hpp"
-
 namespace Gaia::NameService
 {
     /**
@@ -20,20 +18,18 @@ namespace Gaia::NameService
      */
     class NameClient
     {
-    private:
-        friend class NameToken;
-
     protected:
         /// Connection to Redis server, default address is '127.0.0.1:6379'
         std::shared_ptr<sw::redis::Redis> Connection;
 
     private:
-        /// Activate a name.
-        void RegisterName(const std::string& name, const std::string& address = "");
-        /// Deactivate a name.
-        void UnregisterName(const std::string& name);
         /// Update the timestamp of a name to keep it valid.
         void UpdateName(const std::string& name);
+
+        /// Mutex for names list.
+        std::shared_mutex NamesMutex;
+        /// Names to update.
+        std::unordered_set<std::string> Names;
 
     public:
         /**
@@ -61,11 +57,20 @@ namespace Gaia::NameService
         bool HasName(const std::string& name);
 
         /**
-         * @brief Register a name and get the corresponding token.
-         * @param name The name to take up.
-         * @return The corresponding token to the given name.
+         * @brief Register a name and add it to the update list.
+         * @param name Name to register.
+         * @param address Address corresponding to the name.
          */
-        NameToken HoldName(const std::string& name);
+        void RegisterName(const std::string& name, const std::string& address);
+
+        /**
+         * @brief Unregister a name and remove it from the update list.
+         * @param name Name to unregister.
+         */
+        void UnregisterName(const std::string& name);
+
+        /// Update the expiration time of names in the update list.
+        void Update();
 
         /**
          * @brief Get the address text of the given name.
