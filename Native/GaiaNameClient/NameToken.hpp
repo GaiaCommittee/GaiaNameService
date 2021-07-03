@@ -33,6 +33,8 @@ namespace Gaia::NameService
         NameToken(NameClient* host, std::string name, const std::string& address = "") noexcept;
 
     public:
+        /// Move constructor.
+        NameToken(NameToken&& token) noexcept ;
         /// Destruct and notify the host client to unregister the bound name.
         ~NameToken();
         /// Corresponding name.

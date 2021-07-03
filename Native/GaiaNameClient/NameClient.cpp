@@ -38,9 +38,9 @@ namespace Gaia::NameService
     }
 
     /// Register a name and get the corresponding token.
-    std::unique_ptr<NameToken> NameClient::HoldName(const std::string &name)
+    NameToken NameClient::HoldName(const std::string &name)
     {
-        return std::unique_ptr<NameToken>(new NameToken(this, name));
+        return NameToken(this, name);
     }
 
     /// Activate a name.

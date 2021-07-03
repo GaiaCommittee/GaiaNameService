@@ -15,6 +15,22 @@ namespace Gaia::NameService
         }
     }
 
+    /// Move constructor.
+    NameToken::NameToken(NameToken&& target)  noexcept :
+        Host(target.Host), Name(target.Name), UpdaterFlag(false)
+    {
+        bool target_running = target.IsBackgroundUpdaterRunning();
+        if (target_running)
+        {
+            target.StopBackgroundUpdater();
+        }
+        UpdaterToken = std::move(target.UpdaterToken);
+        if (target_running)
+        {
+            StartBackgroundUpdater();
+        }
+    }
+
     /// Destruct and notify the host client to unregister the bound name.
     NameToken::~NameToken()
     {

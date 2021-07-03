@@ -65,7 +65,7 @@ namespace Gaia::NameService
          * @param name The name to take up.
          * @return The corresponding token to the given name.
          */
-        std::unique_ptr<NameToken> HoldName(const std::string& name);
+        NameToken HoldName(const std::string& name);
 
         /**
          * @brief Get the address text of the given name.
