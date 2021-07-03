@@ -34,7 +34,10 @@ namespace Gaia::NameService
 
     public:
         /// Move constructor.
-        NameToken(NameToken&& token) noexcept ;
+        NameToken(NameToken&& token) noexcept;
+        /// Copy constructor, background updater of the new token is stopped initially.
+        NameToken(const NameToken& target);
+
         /// Destruct and notify the host client to unregister the bound name.
         ~NameToken();
         /// Corresponding name.
