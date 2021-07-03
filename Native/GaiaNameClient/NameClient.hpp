@@ -61,7 +61,7 @@ namespace Gaia::NameService
          * @param name Name to register.
          * @param address Address corresponding to the name.
          */
-        void RegisterName(const std::string& name, const std::string& address);
+        void RegisterName(const std::string& name, const std::string& address = "");
 
         /**
          * @brief Unregister a name and remove it from the update list.
