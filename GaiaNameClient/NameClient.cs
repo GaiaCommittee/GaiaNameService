@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using StackExchange.Redis;
@@ -18,6 +19,13 @@ namespace Gaia.NameService
         /// Redis database instance.
         /// </summary>
         private readonly IDatabase Database = null;
+
+        /// <summary>
+        /// Names to update.
+        /// Those names are all registered from this client,
+        /// and will be automatically unregistered when this client destruct.
+        /// </summary>
+        private readonly HashSet<string> Names = new HashSet<string>();
 
         /// <summary>
         /// Construct and connect to a Redis server.
@@ -69,14 +77,37 @@ namespace Gaia.NameService
         }
 
         /// <summary>
-        /// Construct a name token and register the given name.
+        /// Update all names in the update list.
+        /// This function call will update the remaining expiration of names to 3 seconds.
         /// </summary>
-        /// <param name="name">The name to hold.</param>
-        /// <param name="address">The address of this name.</param>
-        /// <returns>Corresponding name token.</returns>
-        public NameToken HoldName(string name, string address = "")
+        public void Update()
         {
-            return new(Server, Database, name, address);
+            foreach (var name in Names)
+            {
+                Database.KeyExpire($"names/{name}", TimeSpan.FromSeconds(3));
+            }
+        }
+
+        /// <summary>
+        /// Register a name and add it to the update list.
+        /// </summary>
+        /// <param name="name">Name to register.</param>
+        /// <param name="address">Address corresponding to this name.</param>
+        public void RegisterName(string name, string address = "")
+        {
+            Database.StringSet($"names/{name}", address);
+            Database.KeyExpire($"names/{name}", TimeSpan.FromSeconds(3));
+            Names.Add(name);
+        }
+
+        /// <summary>
+        /// Unregister a name and remove it from the update list.
+        /// </summary>
+        /// <param name="name">Name to unregister.</param>
+        public void UnregisterName(string name)
+        {
+            Database.KeyDelete($"names/{name}");
+            Names.Remove($"names/{name}");
         }
     }
 }
